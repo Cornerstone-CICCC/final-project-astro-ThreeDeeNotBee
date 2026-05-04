@@ -1,0 +1,39 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import items from "../../assets/products.json";
+import "../../styles/global.css";
+
+export function getStaticPaths() {
+  return items.map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+
+const { item } = Astro.props;
+---
+
+<Layout>
+  <header>
+    <h1>Get bejeweled</h1>
+    <nav><a href="/items">← Back to Store</a></nav>
+  </header>
+  <main class="detail-container">
+    <img class="detail-img" src=`${item.image}`>
+    <div class="detail-info">
+      <h1>{item.title}</h1>
+      <p class="price">{item.price}</p>
+      <p class="description">{item.description}</p>
+      
+      { 
+        item.inStock===true?<button class="btn">Add to Cart</button>:
+        <button class="btn" disabled>Out of stock</button>
+      }
+
+    </div>
+  </main>
+</Layout>
+
+<script>
+
+</script>

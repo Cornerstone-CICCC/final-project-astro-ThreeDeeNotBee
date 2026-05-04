@@ -1,0 +1,84 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import items from "../../assets/products.json";
+import "../../styles/global.css";
+
+---
+
+<Layout>
+  <header>
+    <h1>See all the items available</h1>
+  </header>
+  
+  <main class="container">
+  <aside class="filters">
+            <h3>Filters</h3>
+            
+            <div class="filter-group">
+                <label for="category">Category</label>
+                <select id="category">
+                    <option value="all">All Groups</option>
+                    <option value="rings">Rings</option>
+                    <option value="necklaces">Necklaces</option>
+                    <option value="bracelets">Bracelets</option>
+                    <option value="earrings">Earrings</option>
+                    <option value="watches">Watches</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>
+                    <input type="checkbox" id="stock-only"> In-Stock Only
+                </label>
+            </div>
+        </aside>
+  <div class="product-grid" id="product-list">
+
+      {
+        items.map((item) => {
+          return (
+
+              <div class=`product-card` data-group={`${item.category}`} data-stock={`${item.inStock}`}>
+                <img class="smallImage" src={`${item.image}`}/>
+                <div class="info">
+                    <h3>{item.title}</h3>
+                    <p>{item.description}</p>
+                    <a href={`/items/${item.slug}`} class="btn">View Details</a>
+                </div>
+              
+              </div>
+
+          );
+        })
+      }
+
+  </div>
+  </main>
+</Layout>
+
+<script>
+  const categoryFilter = document.getElementById('category') as HTMLSelectElement | null;
+  const stockFilter = document.getElementById('stock-only') as HTMLInputElement | null;
+
+  const products = document.querySelectorAll<HTMLElement>('.product-card');
+
+  const filterItems = (): void => {
+      if (!categoryFilter || !stockFilter) return;
+
+      const category: string = categoryFilter.value;
+      const stockOnly: boolean = stockFilter.checked;
+
+      products.forEach((card: HTMLElement) => {
+          const itemGroup: string = card.getAttribute('data-group') || '';
+          const isInstock: boolean = card.getAttribute('data-stock') === 'true';
+
+          const categoryMatch: boolean = (category === 'all' || itemGroup === category);
+          const stockMatch: boolean = (!stockOnly || isInstock);
+
+          card.style.display = (categoryMatch && stockMatch) ? 'block' : 'none';
+      });
+  };
+
+  categoryFilter?.addEventListener('change', filterItems);
+  stockFilter?.addEventListener('change', filterItems);
+</script>
